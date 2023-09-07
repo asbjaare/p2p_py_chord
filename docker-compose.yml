@@ -1,0 +1,17 @@
+version: '3'
+services:
+  node1:
+    build:
+      context: ./p2p_network
+    environment:
+      - NODE_ID=1
+    ports:
+      - "8000:8000"
+  node2:
+    build:
+      context: ./p2p_network
+    environment:
+      - NODE_ID=2
+    ports:
+      - "8001:8000"
+  # Add more nodes as needed
