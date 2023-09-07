@@ -1,7 +1,6 @@
 # p2p_node.py
 
-from flask import Flask, request
-import hashlib
+from flask import Flask
 import os
 
 app = Flask(__name__)
@@ -19,6 +18,8 @@ if node_id_str is not None:
         print("NODE_ID is not a valid integer.")
 else:
     print("NODE_ID environment variable is not set.")
+
+
 # Each node has an ID based on its ID
 def get_node_id(node_id):
     return node_id % RING_SIZE
