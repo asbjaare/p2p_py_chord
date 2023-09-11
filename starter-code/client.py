@@ -273,7 +273,6 @@ def get_nonexistent_key(nodes):
 
 
 def main(args):
-
     nodes = set(args.nodes)
     nodes |= walk_neighbours(args.nodes)
     nodes = list(nodes)
@@ -295,7 +294,6 @@ def main(args):
 
 
 if __name__ == "__main__":
-
     parser = arg_parser()
     args = parser.parse_args()
     main(args)
