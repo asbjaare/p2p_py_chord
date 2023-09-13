@@ -72,7 +72,7 @@ lorem = Lorem()
 
 def generate_pairs(count):
     pairs = {}
-    for x in range(0, count):
+    for _ in range(0, count):
         key = str(uuid.uuid4())
         value = lorem.text()
         pairs[key] = value
