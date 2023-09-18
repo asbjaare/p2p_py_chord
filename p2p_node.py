@@ -1,35 +1,47 @@
 # p2p_node.py
 
-from flask import Flask
-import os
-
-app = Flask(__name__)
-
-# The Chord ring size (e.g., 2^4 = 16 nodes)
-RING_SIZE = 16
-
-# Get the node ID from environment variable
-node_id_str = os.environ.get("NODE_ID")
-
-if node_id_str is not None:
-    try:
-        node_id = int(node_id_str)
-    except ValueError:
-        print("NODE_ID is not a valid integer.")
-else:
-    print("NODE_ID environment variable is not set.")
+import socket
+import hashlib
 
 
-# Each node has an ID based on its ID
-def get_node_id(node_id):
-    return node_id % RING_SIZE
+# Consistant hash
+def hash_function(key, size):
+    return int(hashlib.sha1(key.encode("utf-8")).hexdigest(), 16) % size
 
 
 # Chord node class
 class ChordNode:
-    def __init__(self, node_id):
-        self.node_id = node_id
+    def __init__(self, m=4):
         self.data = {}
+        self.finger_table = []
+        self.IP = socket.gethostbyname(socket.gethostname())
+        self.size_of_cluster = 2**m
+        self.node_id = hash_function(self.IP, self.size_of_cluster)
+        self.key_size = m
+
+    def __str__(self):
+        return "Node ID: " + str(self.node_id)
+
+    def finger_table(self):
+
+        nodes = []
+
+        with open("ip.txt", "r") as f:
+            entries = [line.strip().split(" - ") for line in f if " - " in line]
+            ips = [entry[1] for entry in entries if len(entry) == 2]
+            nodes = sorted((hash_function(ip, self.size_of_cluster), ip) for ip in ips)
+
+        for i in range(self.key_size):
+            start = (self.node_id + 2**i) % self.size_of_cluster
+
+            successor = next((id, ip) for id, ip in nodes if id >= start)
+            if not successor:
+                successor = nodes[0]
+            self.finger_table.append((start, successor))
+
+        print(self.finger_table)
+
+        return self.finger_table
 
     # Rest of the ChordNode class implementation
 
@@ -37,4 +49,11 @@ class ChordNode:
 # Rest of the Chord node code
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8000)
+    current_node = socket.gethostname()
+
+    node = ChordNode()
+
+    print(str(ChordNode()))
+    ChordNode.finger_table(self=node)
+
+    # app.run(host="0.0.0.0", port=8000)
